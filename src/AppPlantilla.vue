@@ -47,7 +47,7 @@ export default {
                         {
                             label: element1.opcion.descripcion,
                             icon: element1.opcion.icono,
-                            to: "/" + element1.opcion.alias
+                            to: element1.opcion.formulario
                         }
                     );
                 }

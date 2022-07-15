@@ -39,13 +39,13 @@
                     <Column field="nombre" header="Nombres">
                         <template #body="slotProps">
                             <span class="p-column-title"> Nombres:</span>
-                            <span  :class="'customer-badge'">{{slotProps.data.nombre}} {{slotProps.data.apellido}} </span>
+                            <span  :class="'customer-badge'">{{slotProps.data.nombres}} {{slotProps.data.apellidos}} </span>
                         </template>
                     </Column>
                     <Column field="perfil" header="Perfil">
                         <template #body="slotProps">
                             <span class="p-column-title"> Perfil:</span>
-                            <span  :class="'customer-badge'">{{slotProps.data.perfil.perfil}} </span>
+                            <span  :class="'customer-badge'">{{slotProps.data.perfil.nombre}} </span>
                         </template>
                     </Column>
                     <Column field="telefono" header="Teléfono">
@@ -97,7 +97,7 @@
                         <div class="p-field p-grid">
                             <label for="perfil" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Perfil: </label>
                             <div class="p-col-12 p-md-10"> 
-                                <Dropdown v-model="perfilSeleccionado" :options="valoresPerfil" optionLabel="perfil" placeholder="Seleccione perfil"/>
+                                <Dropdown v-model="perfilSeleccionado" :options="valoresPerfil" optionLabel="nombre" placeholder="Seleccione perfil"/>
                                 <small class="p-invalid" v-if="submitted && !perfilSeleccionado.idPerfil"> Perfil es obligatorio </small>
                             </div>
                         </div>
@@ -111,15 +111,15 @@
                         <div class="p-field p-grid">
                             <label for="nombres" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Nombres:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="nombres" v-model.trim="usuario.nombre" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.nombre}"/>
-                                <small class="p-invalid" v-if="submitted && !usuario.nombre"> Nombres es obligatorio </small>
+                                <InputText id="nombres" v-model.trim="usuario.nombres" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.nombres}"/>
+                                <small class="p-invalid" v-if="submitted && !usuario.nombres"> Nombres es obligatorio </small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="apellidos" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Apellidos:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="apellidos" v-model.trim="usuario.apellido" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.apellido}"/>
-                                <small class="p-invalid" v-if="submitted && !usuario.apellido"> Apellidos es obligatorio </small>
+                                <InputText id="apellidos" v-model.trim="usuario.apellidos" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.apellidos}"/>
+                                <small class="p-invalid" v-if="submitted && !usuario.apellidos"> Apellidos es obligatorio </small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
@@ -128,14 +128,12 @@
                                 <InputText id="direccion" v-model.trim="usuario.direccion" maxlength=250 required="true" autofocus />
                             </div>
                         </div>
-
                         <div class="p-field p-grid">
                             <label for="telefono" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Teléfono:</label>
                             <div class="p-col-12 p-md-10">
                                 <InputText id="telefono" v-model.trim="usuario.telefono" maxlength=10 autofocus />
                             </div>
                         </div>
-
                         <div class="p-field p-grid">
                             <label for="usuario" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Usuario:</label>
                             <div class="p-col-12 p-md-10">
@@ -143,7 +141,6 @@
                                 <small class="p-invalid" v-if="submitted && !usuario.usuario"> Usuario es obligatorio </small>
                             </div>
                         </div>
-
                         <div class="p-field p-grid">
                             <label for="clave" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Clave:</label>
                             <div class="p-col-12 p-md-10">
@@ -167,6 +164,7 @@ import UsuarioService from "../../service/seguridad/UsuarioService";
 import PerfilService from "../../service/seguridad/PerfilService";
 import Globals from "../../js/Globales";
 import mensajeGlobal from "../../js/mensajesGlobales";
+import Swal from 'sweetalert2';
 
 export default {
     name: 'UsuarioP',
@@ -242,8 +240,7 @@ export default {
                 }else{
                     this.imagenUsuario = "assets/layout/images/user_default2.png";
                 }
-            })
-            .catch(() => {
+            }).catch(() => {
                 this.currentFile = undefined;
                 this.imagenUsuario = "assets/layout/images/user_default2.png";
             });
@@ -256,35 +253,38 @@ export default {
         guardarUsuario(){
             this.submitted = true;
             if(!this.validarDatos()){
-                this.usuario.estado = "A";
-                this.usuario.perfil = this.perfilSeleccionado;
-                this.usuario.clave = this.clave;
-                if(this.selectedFiles != undefined || this.selectedFiles != null){
-                    this.currentFile = this.selectedFiles.item(0);
-                }
-                this.usuarioService.guardar(this.usuario).then((response) => {
-                    if(response.status == 201){ // se registra el usuario existosamente
-                        mensajeGlobal("", response.status,"","G");
-                        let dataUsuario = response.data.usuario;
-                        setTimeout(() => {
-                            if(this.currentFile != null || this.currentFile != undefined){ 
-                                this.usuarioService.upload(this.currentFile, dataUsuario.idUsuario).then(() =>{
-                                    return this.usuarioService.obtenerImagenUsuario(dataUsuario.idUsuario);
-                                })
-                                .then(files => {
-                                    this.imagenUsuario = "data:image/png;base64," + files.data;
-                                })
-                                .catch(() => {
-                                    this.currentFile = undefined;
-                                    this.imagenUsuario = "assets/layout/images/user_default2.png";
-                                });
-                            }  
-                            setTimeout(() => {
-                                this.limpiarDatos();
-                                this.listarUsuarios();
-                                this.hideDialog();
-                            }, 150);
-                        }, 200);
+                Swal.fire({ title: 'Grabar datos', text: "Esta seguro de realizar el proceso" , icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Si', cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.usuario.estado = "A";
+                        this.usuario.perfil = this.perfilSeleccionado;
+                        this.usuario.clave = this.clave;
+                        if(this.selectedFiles != undefined || this.selectedFiles != null){
+                            this.currentFile = this.selectedFiles.item(0);
+                        }
+                        this.usuarioService.guardar(this.usuario).then((response) => {
+                            if(response.status == 201){ // se registra el usuario existosamente
+                                mensajeGlobal("", response.status,"","G");
+                                let dataUsuario = response.data.usuario;
+                                setTimeout(() => {
+                                    if(this.currentFile != null || this.currentFile != undefined){ 
+                                        this.usuarioService.upload(this.currentFile, dataUsuario.idUsuario).then(() =>{
+                                            return this.usuarioService.obtenerImagenUsuario(dataUsuario.idUsuario);
+                                        }).then(files => {
+                                            this.imagenUsuario = "data:image/png;base64," + files.data;
+                                        }).catch(() => {
+                                            this.currentFile = undefined;
+                                            this.imagenUsuario = "assets/layout/images/user_default2.png";
+                                        });
+                                    }  
+                                    setTimeout(() => {
+                                        this.limpiarDatos();
+                                        this.listarUsuarios();
+                                        this.hideDialog();
+                                    }, 150);
+                                }, 200);
+                            }
+                        });
                     }
                 });
             }
@@ -292,13 +292,13 @@ export default {
 
         validarDatos(){
             let band = false;
-            if(this.usuario.nombre == null || this.usuario.nombre == undefined || this.usuario.nombre == ""){
+            if(this.usuario.nombres == null || this.usuario.nombres == undefined || this.usuario.nombres == ""){
                 band = true;
             }
             if(this.usuario.cedula == null || this.usuario.cedula == undefined || this.usuario.cedula == ""){
                 band = true;
             }
-            if(this.usuario.apellido == null || this.usuario.apellido == undefined || this.usuario.apellido == ""){
+            if(this.usuario.apellidos == null || this.usuario.apellidos == undefined || this.usuario.apellidos == ""){
                 band = true;
             }
             if(this.usuario.usuario == null || this.usuario.usuario == undefined || this.usuario.usuario == ""){
