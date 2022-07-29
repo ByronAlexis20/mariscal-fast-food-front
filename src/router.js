@@ -31,23 +31,18 @@ export default new Router({
                     name: 'usuario',
                     component: () => import('./pages/seguridad/Usuario.vue')
                 },
+                
                 {
-                    path: '/misdatos',
-                    name: 'misdatos',
-                    component: () => import('./pages/seguridad/Datos.vue')
+                    path: '/categoria',
+                    name: 'categoria',
+                    component: () => import('./pages/mantenimiento/Categoria.vue')
+                },
+                {
+                    path: '/producto',
+                    name: 'producto',
+                    component: () => import('./pages/mantenimiento/Producto.vue')
                 },
 
-                {
-                    path: '/marca',
-                    name: 'marca',
-                    component: () => import('./pages/administracion/Marca.vue')
-                },
-
-                {
-                    path: '/registroequipo',
-                    name: 'registroequipo',
-                    component: () => import('./pages/equipos/RegistroEquipos.vue')
-                },
             ]
         },
 		{

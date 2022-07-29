@@ -42,7 +42,6 @@ import UsuarioService from "./service/seguridad/UsuarioService";
 			this.nombreUsuario = nombre[0] + " " + apellido[0];
 			var promUsuario = new Promise((resolve,reject) => {
 				this.usuarioService.obtenerImagenUsuario(user.codUsuario).then(files => {
-					console.log(files);
 					resolve(files);
 				})
 				.catch((err) => {

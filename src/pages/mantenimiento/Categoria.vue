@@ -5,14 +5,14 @@
                 <Toast />
                 <Toolbar class="p-mb-4">
                     <template slot="left">
-                        <Button label="Nuevo" icon="pi pi-plus" class="p-button-success p-mr-2" @click="nuevoRegistro"/>
+                        <Button label="Nuevo" icon="pi pi-plus" class="p-button-success p-mr-2" @click="nuevoRegistro" />
                     </template>
                 </Toolbar>
                 <DataTable
                     class="p-datatable-gridlines p-datatable-striped p-datatable-sm p-datatable-responsive p-datatable-customers"
-                    :value="dataMarca"
+                    :value="dataCategoria"
                     :rowHover="true"
-                    dataKey="idMarca"
+                    dataKey="idUsuario"
                     :paginator="true"
                     :rows="10"
                     :filters="filters"
@@ -21,7 +21,7 @@
                     currentPageReportTemplate="Mostrar {first} hasta {last} de {totalRecords} Registros">
                     <template #header>
                         <div class="table-header">
-                            <h5 class="p-m-0"> Marcas </h5>
+                            <h5 class="p-m-0"> Categorias </h5>
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
                                 <InputText v-model="filters['global']" placeholder="Buscar..." />
@@ -30,69 +30,50 @@
                     </template>
                     <template #empty> No se encontraron Registros. </template>
                     <template #loading> Cargando Registros, por favor espere un momento. </template>
-                    <Column field="marca" header="Marca" >
+                    <Column field="codigo" header="Código" headerStyle="width: 7em;">
                         <template #body="slotProps">
-                            <span class="p-column-title"> Marca:</span>
-                            {{ slotProps.data.marca }}
+                            <span class="p-column-title"> Código:</span>
+                            {{ slotProps.data.idCategoria }}
                         </template>
                     </Column>
-                    <Column field="logo" header="Logo">
+                    <Column field="categoria" header="Categoría">
                         <template #body="slotProps">
-                            <span class="p-column-title"> Logo:</span>
-                            <img :src="convertirImagen(slotProps.data.logo)" height="50" />
+                            <span class="p-column-title"> Categoría:</span>
+                            <span  :class="'customer-badge'">{{slotProps.data.categoria}} </span>
                         </template>
                     </Column>
-                    <Column field="posicion" header="Posición" headerStyle="width: 7em;">
+                    <Column field="cod_estado" header="Estado" headerStyle="width: 10em;">
                         <template #body="slotProps">
-                            <span class="p-column-title"> Posición:</span>
-                            {{ slotProps.data.posicion }}
+                            <span class="p-column-title"> Estado:</span>
+                            <span v-if="slotProps.data.estado == 'A'" :class="'customer-badge status-1'">ACTIVO</span>
+                            <span v-else :class="'customer-badge status-0'">INACTIVO</span>
                         </template>
                     </Column>
                     <Column headerStyle="width: 7em;">
                         <template #body="slotProps">
                             <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" @click="editarRegistro(slotProps.data)" />
-                            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" />
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="eliminarRegistro(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
-                <Dialog :visible.sync="marcaDialog" :style="{ width: '500px' }" header="Marcas" :modal="true" class="p-fluid" :position="position" @hide="hideDialog">
+                <Dialog :visible.sync="categoriaDialog" :style="{ width: '500px' }" header="Mantenimiento de categoría" :modal="true" class="p-fluid" :position="position" @hide="hideDialog">
                     <div class="col-md-12 p-lg-12">
                         <div class="p-field p-grid">
                             <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Código:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="codigo" v-model.trim="marca.idMarca" disabled/>
+                                <InputText id="codigo" v-model.trim="categoria.idCategoria" disabled/>
                             </div>
                         </div>
                         <div class="p-field p-grid">
-                            <label for="marca" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Marca:</label>
+                            <label for="categoria" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Categoría:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="marca" v-model.trim="marca.marca" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !marca.marca}"/>
-                                <small class="p-invalid" v-if="submitted && !marca.marca"> Marca es obligatorio </small>
+                                <InputText id="categoria" v-model="categoria.categoria" required="true" autofocus :class="{'p-invalid': submitted && !categoria.categoria}"/>
+                                <small class="p-invalid" v-if="submitted && !categoria.categoria"> Categoría es obligatorio </small>
                             </div>
                         </div>
-                        <div class="p-field p-grid">
-                            <label for="marca" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Posición:</label>
-                            <div class="p-col-12 p-md-10">
-                                <InputText id="marca" v-model.trim="marca.posicion" maxlength=2 required="true" autofocus :class="{'p-invalid': submitted && !marca.posicion}"/>
-                                <small class="p-invalid" v-if="submitted && !marca.posicion"> Posición es obligatorio </small>
-                            </div>
-                        </div>
-                        <div class="p-field p-grid">
-                            <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Logo:</label>
-                            <div class="p-col-12 p-md-10">
-                                <input type="file" ref="file" @change="selectFile" />
-                            </div>
-                        </div>
-                        <div class="p-field p-grid">
-                            <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"></label>
-                            <div class="p-col-12 p-md-10">
-                                <img :src="logoMarca" height="50"/>
-                            </div>
-                        </div>
-                        <small>Es recomendado que las imagenes tengan una dimensión de 300x52 px </small>
                     </div>
                     <template #footer>
-                        <Button label="Guardar" icon="pi pi-save" class="p-button-primary p-mr-2" @click='guardarMarca' />
+                        <Button label="Guardar" icon="pi pi-save" class="p-button-primary p-mr-2" @click='guardar' />
                         <Button label="Salir" icon="pi pi-times" class="p-button-danger p-mr-2" @click="hideDialog"/>
                     </template>
                 </Dialog>
@@ -102,106 +83,103 @@
 </template>
 
 <script>
-import MarcaService from "../../service/equipos/MarcaService";
 import Globals from "../../js/Globales";
-import mensajeGlobal from "../../js/mensajesGlobales";
-
+import Swal from 'sweetalert2';
+import CategoriaService from "../../service/administracion/CategoriaService";
 export default {
-    name: 'UsuarioP',
+    name: 'CategoriaP',
     data() {
         return {
-            dataMarca: null,
-            marca: {},
+            dataCategoria: [],
+            categoria: {},
 
             rango: Globals[0].paginacion.rango,
             filters: {},
             position: "top",
-            marcaDialog: false,
+            categoriaDialog: false,
 
-            selectedFiles: undefined,
-            currentFile: undefined,
-            logoMarca: null,
             submitted: false,
         };
     },
-    marcaService: null,
+    categoriaService: null,
     
     created() {
-        this.marcaService = new MarcaService();
+        this.categoriaService = new CategoriaService();
     },
 
     mounted() {
-        this.listarMarcas();
+        this.listarCategorias();
     },
 
     components: {
     },
 
     methods: {
-        listarMarcas() {
-            this.dataMarca = [];
-            this.marcaService.buscarTodasMarcas().then((response) => {
-                this.dataMarca = response.data;
+        listarCategorias() {
+            this.categoriaService.buscarCategoriasActivas().then((response) => {
+                this.dataCategoria = response.data;
             }).catch(() => {
             });
         },
+
         hideDialog(){
-            this.marcaDialog = false;
+            this.categoriaDialog = false;
         },
+
         nuevoRegistro() {
-            this.marcaDialog = true;
-            this.marca = {};
-            this.clave = null;
-            this.logoMarca = "assets/layout/images/user_default2.png";
-        },
-        async editarRegistro(marca) {
-            this.marcaDialog = true;
-            this.marca = { ...marca };
-            this.logoMarca = null;
-            if(marca.logo != "" || marca.logo != null || marca.logo != undefined){
-                this.logoMarca = "data:image/png;base64," + marca.logo;
-            }
+            this.categoriaDialog = true;
+            this.categoria = {};
         },
 
-        selectFile() {
-            this.selectedFiles = this.$refs.file.files;
+        async editarRegistro(categoria) {
+            this.categoriaDialog = true;
+            this.categoria = { ...categoria };
         },
 
-        guardarMarca(){
+        guardar(){
             this.submitted = true;
             if(!this.validarDatos()){
-                this.marca.estado = "A";
-                if(!(this.selectedFiles === undefined || this.selectedFiles === null)){
-                    this.currentFile = this.selectedFiles.item(0);
-                }
-                this.marcaService.guardarMarca(this.marca).then((response) => {
-                    if(response.status == 201){ // se registra el usuario existosamente
-                        mensajeGlobal("", response.status,"","G");
-                        let dataMarca = response.data.marca;
-                        setTimeout(() => {
-                            if(!(this.currentFile === null || this.currentFile === undefined)){ 
-                                this.marcaService.guardarLogoMarca(this.currentFile, dataMarca.idMarca).then(files => {
-                                    this.logoMarca = "data:image/png;base64," + files.data;
-                                })
-                                .catch(() => {
-                                    this.currentFile = undefined;
-                                    this.logoMarca = "assets/layout/images/user_default2.png";
-                                });
-                            }  
-                            setTimeout(() => {
+                Swal.fire({ title: 'Grabar datos', text: "Esta seguro de realizar el proceso" , icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Si', cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.categoria.estado = "A";
+                        this.categoriaService.guardar(this.categoria).then((response) => {
+                            if(response.status == 201){ // se registra el usuario existosamente
+                                Swal.fire({ position: 'center', customClass: { container: 'my-swal' }, title: 'Correcto!', text: "Grabado correctamente", icon: 'success', showConfirmButton: true, timer: 6000 });
+                                this.listarCategorias();
                                 this.limpiarDatos();
-                                this.listarMarcas();
-                                this.hideDialog();
-                            }, 150);
-                        }, 200);
+                                this.categoriaDialog = false;
+                            }
+                        }).catch(() => {
+                            Swal.fire({ position: 'center', title: 'Advertencia!', text: "Error al grabar", icon: 'warning', showConfirmButton: true, timer: 6000 });
+                        });
                     }
                 });
             }
         },
 
+        eliminarRegistro(data){
+            Swal.fire({ title: 'Advertencia', text: "Desea Eliminar el Registro?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Si', cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    data.estado = "I";
+                    this.categoriaService.guardar(data).then((response) => {
+                        if(response.status == 201){ // se registra el usuario existosamente
+                            Swal.fire({ position: 'center', customClass: { container: 'my-swal' }, title: 'Correcto!', text: "Eliminado correctamente", icon: 'success', showConfirmButton: true, timer: 6000 });
+                            this.listarCategorias();
+                            this.limpiarDatos();
+                            this.categoriaDialog = false;
+                        }
+                    }).catch(() => {
+                        Swal.fire({ position: 'center', title: 'Advertencia!', text: "Error al eliminar", icon: 'warning', showConfirmButton: true, timer: 6000 });
+                    });
+                }
+            })
+        },
+
         validarDatos(){
             let band = false;
-            if(this.marca.marca == null || this.marca.marca == undefined || this.marca.marca == ""){
+            if(this.categoria.categoria == null || this.categoria.categoria == undefined || this.categoria.categoria == ""){
                 band = true;
             }
             return band;
@@ -209,14 +187,8 @@ export default {
 
         limpiarDatos(){
             this.submitted = false;
-            this.marca = {};
-            this.selectedFiles = undefined;
-            this.currentFile = undefined;
-            this.logoMarca = null;
-        },
-        convertirImagen(imagen){
-            return "data:image/png;base64," + imagen;
-        },
+            this.categoria = {};
+        }
     },
 };
 </script>
