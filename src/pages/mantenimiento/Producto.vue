@@ -9,7 +9,6 @@
                     </template>
                 </Toolbar>
                 
-
                 <DataTable 
                     :value="dataProductos" 
                     :expandedRows.sync="expandedRows" 
@@ -25,10 +24,19 @@
                             <Column field="nombreProducto" header="Nombre" sortable></Column>
                             <Column field="precio" header="Precio" sortable></Column>
                             <Column field="stock" header="Stock" sortable></Column>
-                            <Column headerStyle="width: 9em;">
+                            <Column field="imagen" header="Imagen" style="text-align: center"> 
                                 <template #body="slotProps">
-                                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" @click="editarRegistro(slotProps.data)" />
-                                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="eliminarRegistro(slotProps.data)" />
+                                    <div style="text-align: center">
+                                        <span class="p-column-title"> Imagen:</span>
+                                        <img :src="convertirImagen(slotProps.data.imagen)" width="90" height="120" class="product-image"/>
+                                    </div>
+                                </template>
+                            </Column>
+                            <Column headerStyle="width: 10em;">
+                                <template #body="slotProps">
+                                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-1" v-tooltip.top="'Editar'" @click="editarRegistro(slotProps.data)" />
+                                    <Button icon="pi pi-eye" class="p-button-rounded p-button-info p-mr-1" v-tooltip.top="'Imagenes'" @click="registrarImagen(slotProps.data)" />
+                                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" v-tooltip.top="'Eliminar'" @click="eliminarRegistro(slotProps.data)" />
                                 </template>
                             </Column>
                         </DataTable>
@@ -78,6 +86,52 @@
                 <Button label="Salir" icon="pi pi-times" class="p-button-danger p-mr-2" @click="hideDialog"/>
             </template>
         </Dialog>
+        <Dialog :visible.sync="imagenRegistroDialog" :style="{ width: '450px', height: '600px' }" :header=nombreProductoSeleccionado :modal="true" class="p-fluid" :position="position" @hide="hideDialogImagenRegistro">
+            <div :style="{ 'height':'500px' }">
+                <Button label="Agregar imagen" icon="pi pi-plus" class="p-button-primary p-mr-2 btn-sm" @click='agregarImagen' />
+                <DataTable
+                    class="p-datatable-gridlines p-datatable-striped p-datatable-sm p-datatable-responsive p-datatable-customers"
+                    :value="dataImagenes"
+                    :rowHover="true"
+                    dataKey="idImagen"
+                    :paginator="true"
+                    :rows="5"
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    :rowsPerPageOptions="[5, 10, 25]"
+                    currentPageReportTemplate="Mostrar {first} hasta {last} de {totalRecords} Registros">
+                    <template #empty> No se encontraron Registros. </template>
+                    <template #loading>Cargando Registros, por favor espere un momento.</template>
+                    <Column field="imagen" header="Imagen" style="text-align: center"> 
+                        <template #body="slotProps">
+                            <div style="text-align: center">
+                                <span class="p-column-title"> Imagen:</span>
+                                <img :src="convertirImagen(slotProps.data.imagen)" width="90" height="120" class="product-image"/>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column headerStyle="width: 5em;">
+                        <template #body="slotProps" >
+                            <div style="text-align: center">
+                                <Button icon="pi pi-trash"  class="p-button-rounded p-button-danger" v-tooltip.top="'Eliminar'" @click="eliminarImagen(slotProps.data)"/>
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </div>
+            <template #footer>
+                <Button label="Salir" icon="pi pi-times" class="p-button-warning p-mr-2" @click="hideDialogImagenRegistro"/>
+            </template>
+        </Dialog>
+        <Dialog :visible.sync="imagenesDialog" :style="{ width: '500px', height: '500px' }" :header=nombreProductoSeleccionado :modal="true" class="p-fluid" :position="position" @hide="hideDialogImagenes">
+            <div :style="{ 'height':'400px' }">
+                <h5>Advanced</h5>
+                <FileUpload name="demo[]" :multiple="true" :customUpload="true" @uploader="cargarImagenes" accept="image/*" :maxFileSize="1000000" uploadLabel="Subir" chooseLabel="Elegir" cancelLabel="Cancelar">
+                    <template #empty>
+                        <p>Arrastre y suelte los archivos aquí para cargarlos.</p>
+                    </template>
+                </FileUpload>
+            </div>
+        </Dialog>
     </div>
 </template>
 
@@ -86,6 +140,7 @@ import Globals from "../../js/Globales";
 import Swal from 'sweetalert2';
 import ProductoService from "../../service/administracion/ProductoService";
 import CategoriaService from "../../service/administracion/CategoriaService";
+import ImagenService from "../../service/administracion/ImagenService";
 export default {
     name: 'CategoriaP',
     data() {
@@ -93,6 +148,8 @@ export default {
             dataProductos: [],
             producto: {},
             
+            dataImagenes: [],
+
             categoriaSeleccionado: {},
             valoresCategoria: [],
 
@@ -103,14 +160,21 @@ export default {
 
             submitted: false,
             expandedRowGroups: null,
-            expandedRows: []
+            expandedRows: [],
+
+            imagenRegistroDialog: false,
+            nombreProductoSeleccionado: null,
+
+            imagenesDialog: false,
         };
     },
     productoService: null,
     categoriaService: null,
+    imagenService: null,
     created() {
         this.productoService = new ProductoService();
         this.categoriaService = new CategoriaService();
+        this.imagenService = new ImagenService();
     },
 
     mounted() {
@@ -230,6 +294,49 @@ export default {
             this.$toast.add({severity: 'success', summary: 'All Rows Collapsed', life: 3000});
         },
 
+        hideDialogImagenRegistro(){
+            this.imagenRegistroDialog = false;
+        },
+
+        hideDialogImagenes(){
+            this.imagenesDialog = false;
+        },
+
+        registrarImagen(producto){
+            this.imagenRegistroDialog = true;
+            this.producto = { ...producto };
+            this.nombreProductoSeleccionado = this.producto.nombreProducto;
+            this.listarImagenes(this.producto);
+        },
+
+        listarImagenes(prod){
+            this.dataImagenes = [];
+            this.imagenService.buscarImagenesPorProducto(prod.idProducto).then(response => {
+                this.dataImagenes = response.data;
+            })
+            .catch(() => {
+            });
+        },
+
+        agregarImagen(){
+            this.imagenesDialog = true;
+        },
+
+        cargarImagenes(event){
+            this.imagenService.guardarImagenes(event, this.producto.idProducto).then(() => {
+                this.$toast.add({severity: 'info', summary: 'Correcto', detail: 'Imagenes cargadas corectamente!!', life: 3000});
+                this.listarImagenes(this.producto);
+                this.hideDialogImagenes();
+            })
+            .catch(() => {
+            });
+        },
+
+        convertirImagen(imagen){
+            if(imagen != null){
+                return "data:image/png;base64," + imagen;
+            }
+        },
     },
 };
 </script>
@@ -332,7 +439,8 @@ export default {
 }
 
 .product-image {
-	width: 100px;
+	width: 120px;
+    height: 100px;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
 }
 

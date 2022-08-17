@@ -7,6 +7,10 @@ export default class CategoriaService {
         return http.get(`mff-administracion/categoria/buscarActivos`, { headers: authHeader() });
     }
 
+    buscarActivosMasTodos(){
+        return http.get(`mff-administracion/categoria/buscarActivosMasTodos`, { headers: authHeader() });
+    }
+
     guardar(categoria){
         return http.post("mff-administracion/categoria/guardar",categoria, { headers: authHeader() });
     }

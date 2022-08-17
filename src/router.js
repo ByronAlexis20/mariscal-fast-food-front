@@ -42,7 +42,11 @@ export default new Router({
                     name: 'producto',
                     component: () => import('./pages/mantenimiento/Producto.vue')
                 },
-
+                {
+                    path: '/reporteproductos',
+                    name: 'reporteproductos',
+                    component: () => import('./pages/reportes/Productos.vue')
+                },
             ]
         },
 		{
