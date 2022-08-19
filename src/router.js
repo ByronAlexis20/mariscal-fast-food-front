@@ -47,6 +47,16 @@ export default new Router({
                     name: 'reporteproductos',
                     component: () => import('./pages/reportes/Productos.vue')
                 },
+                {
+                    path: '/reporteventas',
+                    name: 'reporteventas',
+                    component: () => import('./pages/reportes/Ventas.vue')
+                },
+                {
+                    path: '/visualizarpedidos',
+                    name: 'visualizarpedidos',
+                    component: () => import('./pages/pedidos/VisualizarPedidos.vue')
+                },
             ]
         },
 		{

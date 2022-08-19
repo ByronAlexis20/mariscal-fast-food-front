@@ -49,7 +49,7 @@
                 <div class="p-field p-grid">
                     <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Código:</label>
                     <div class="p-col-12 p-md-10">
-                        <InputText id="codigo" v-model.trim="producto.idProducto" disabled/>
+                        <InputText id="codigo" v-model.trim="producto.codigo"/>
                     </div>
                 </div>
                 <div class="p-field p-grid">
@@ -189,7 +189,6 @@ export default {
         listarProductos() {
             this.productoService.buscarProductosActivas().then((response) => {
                 this.dataProductos = response.data;
-                console.log(this.dataProductos)
             }).catch(() => {
             });
         },
@@ -236,6 +235,11 @@ export default {
                             this.hideDialog();
                             this.listarProductos();
                             this.limpiarDatos();
+                        }else{
+                            if(response.status == 200){
+                                Swal.fire({ position: 'center', title: 'Advertencia!', text: "" + response.data.mensaje + "", icon: 'warning', showConfirmButton: true, timer: 6000 });
+                                return;
+                            }
                         }
                     }).catch(() => {
                         Swal.fire({ position: 'center', title: 'Advertencia!', text: "Error al grabar", icon: 'warning', showConfirmButton: true, timer: 6000 });
@@ -276,6 +280,23 @@ export default {
                             this.hideDialog();
                             this.listarProductos();
                             this.limpiarDatos();
+                        }
+                    }).catch(() => {
+                        Swal.fire({ position: 'center', title: 'Advertencia!', text: "Error al eliminar", icon: 'warning', showConfirmButton: true, timer: 6000 });
+                    });
+                }
+            })
+        },
+
+        eliminarImagen(data){
+            Swal.fire({ title: 'Advertencia', text: "Desea Eliminar la imagen?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Si', cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    this.imagenService.eliminarImagen(data.idImagen).then((response) => {
+                        if(response.status == 201){ // se registra el usuario existosamente
+                            Swal.fire({ position: 'center', customClass: { container: 'my-swal' }, title: 'Correcto!', text: "Eliminado correctamente", icon: 'success', showConfirmButton: true, timer: 6000 });
+                            this.listarImagenes(this.producto);
                         }
                     }).catch(() => {
                         Swal.fire({ position: 'center', title: 'Advertencia!', text: "Error al eliminar", icon: 'warning', showConfirmButton: true, timer: 6000 });

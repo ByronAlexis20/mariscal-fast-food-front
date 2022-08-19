@@ -17,4 +17,8 @@ export default class ImagenService {
             {headers: {"Content-Type": "multipart/form-data", "Authorization": 'Bearer ' + user.token}}
         );
     }
+
+    eliminarImagen(id){
+        return http.post(`mff-administracion/imagen/eliminar/${id}`,null, { headers: authHeader() });
+    }
 }
