@@ -23,7 +23,4 @@ export default class PedidoService {
         return http.post(`mff-administracion/pedidocliente/atender/${id}`,null, { headers: authHeader() });
     }
 
-    imprimirReporteVentas(){
-        return http.get(`mff-administracion/pedidocliente/imprimirReporteVentas`, { headers: authHeader(), responseType: 'arraybuffer' });
-    }
 }

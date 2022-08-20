@@ -15,8 +15,4 @@ export default class CategoriaService {
         return http.post("mff-administracion/productousuario/guardarProducto",producto, { headers: authHeader() });
     }
 
-    imprimirReporteProductos(idCategoria){
-        return http.get(`mff-administracion/productousuario/imprimirReporteProductos/${idCategoria}`, { headers: authHeader(), responseType: 'arraybuffer' });
-    }
-
 }

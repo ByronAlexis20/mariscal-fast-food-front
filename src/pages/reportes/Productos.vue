@@ -27,7 +27,7 @@
 <script>
 import Swal from 'sweetalert2';
 import CategoriaService from "../../service/administracion/CategoriaService";
-import ProductoService from "../../service/administracion/ProductoService";
+import ReporteService from "../../service/administracion/ReporteService";
 export default {
     data() {
         return {
@@ -40,10 +40,10 @@ export default {
         };
     },
     categoriaService: null,
-    productoService: null,
+    reporteService: null,
     created() {
         this.categoriaService = new CategoriaService();
-        this.productoService = new ProductoService();
+        this.reporteService = new ReporteService();
     },
     mounted() {
         this.cargarCategorias();
@@ -58,7 +58,7 @@ export default {
             });
         },
         visualizarReporte(){
-            this.productoService.imprimirReporteProductos(this.categoriaSeleccionada.idCategoria).then(response => {
+            this.reporteService.imprimirReporteProductos(this.categoriaSeleccionada.idCategoria).then(response => {
                 var headers = response.headers;
                 var blob = new Blob([response.data],{type:headers['content-type']});
                 var link = document.createElement('a');
