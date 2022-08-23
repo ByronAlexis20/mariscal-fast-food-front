@@ -25,10 +25,11 @@
 									<div v-if="submitted && !usuario.password" class="alert alert-danger" role="alert">Ingrese una Contraseña!</div>
                                 </div>
                                 <br>
+                                <gRecaptcha ref="recaptcha" :callback="callback" :sitekey="sitekey"></gRecaptcha>
+                                <br>
                                 <div class="form-group">
-                                    <button class="btn btn-success text-uppercase form-control" :disabled="loading">
-                                        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-                                        <span  v-show="texto_show">Iniciar Sesión</span>
+                                    <button class="btn btn-success text-uppercase form-control" :disabled="disabledBoton">
+                                        <span >Iniciar Sesión</span>
                                     </button>
                                 </div>
                                 <div class="form-group">
@@ -45,7 +46,7 @@
 </template>
 <script>
 import mensajesGlobales  from "../js/mensajesGlobales";
-import VueRecaptcha from 'vue-recaptcha';
+import gRecaptcha from "./recaptcha.vue";
 
 export default {
     name: 'Login',
@@ -60,6 +61,8 @@ export default {
             loading: false,
             showLogin: true,
             submitted: false,
+            sitekey: "6LfDi5QhAAAAAMYRPHSHeVB92goTmb2OFG12Rd6O",
+            disabledBoton: true
         };
     },
     computed: {
@@ -77,9 +80,10 @@ export default {
             this.$router.push('/dashboard');
         }
     },
-    components: { VueRecaptcha },
+    components: {  gRecaptcha },
 
     methods: {
+        
         handleLogin() {
             this.submitted = true;
 			if(!this.validarDatos()){
@@ -115,7 +119,12 @@ export default {
 				return false;
 			}
 			return true;
-		}
+		},
+        callback(token){
+            if(token != null){
+                this.disabledBoton = false;
+            }
+        }
     }
 };
 </script>
