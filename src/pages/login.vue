@@ -45,6 +45,8 @@
 </template>
 <script>
 import mensajesGlobales  from "../js/mensajesGlobales";
+import VueRecaptcha from 'vue-recaptcha';
+
 export default {
     name: 'Login',
     data() {
@@ -75,6 +77,8 @@ export default {
             this.$router.push('/dashboard');
         }
     },
+    components: { VueRecaptcha },
+
     methods: {
         handleLogin() {
             this.submitted = true;
@@ -99,6 +103,9 @@ export default {
                     });
                 }
             });
+        },
+        onVerify: function (response) {
+            if (response) this.form.robot = true;
         },
         validarDatos(){
 			if(!this.usuario.usuario){

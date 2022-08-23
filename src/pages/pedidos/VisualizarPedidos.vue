@@ -69,7 +69,10 @@
 import CategoriaService from "../../service/administracion/CategoriaService";
 import Swal from 'sweetalert2';
 import PedidoService from "../../service/administracion/PedidoService";
+import { io } from 'socket.io-client';
+
 export default {
+    socket: io('http://localhost:3000/'),
     data() {
         return {
             valoresCategoria: [],
@@ -156,7 +159,8 @@ export default {
             this.pedidoDialog = false;
             this.dataPedidos = [];
             this.pedidoSeleccionado = null;
-        }
+        },
+        
     }
 }
 </script>

@@ -80,6 +80,13 @@
                         <small class="p-invalid" v-if="submitted && !producto.stock"> Stock es obligatorio </small>
                     </div>
                 </div>
+                <div class="p-field p-grid">
+                    <label for="precio" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Incluye:</label>
+                    <div class="p-col-12 p-md-10">
+                        <Textarea  id="ingredientes" rows="5" v-model="producto.descripcion" required="true" autofocus :class="{'p-invalid': submitted && !producto.descripcion}"/>
+                        <small class="p-invalid" v-if="submitted && !producto.descripcion"> Descripcion es obligatorio </small>
+                    </div>
+                </div>
             </div>
             <template #footer>
                 <Button label="Guardar" icon="pi pi-save" class="p-button-primary p-mr-2" @click='guardar' />
