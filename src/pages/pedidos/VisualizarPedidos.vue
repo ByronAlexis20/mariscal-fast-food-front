@@ -20,7 +20,7 @@
                             <span :class="'product-badge'">PENDIENTE</span>
 						</div>
 						<div class="product-list-action">
-							<Button icon="pi pi-shopping-cart" label="Ver ordenes" @click="verOrdenes(slotProps.data)"></Button>
+							<Button icon="pi pi-shopping-cart" label="Ver orden" @click="verOrdenes(slotProps.data)"></Button>
 						</div>
 					</div>
 				</div>
@@ -41,9 +41,21 @@
                     currentPageReportTemplate="Mostrar {first} hasta {last} de {totalRecords} Registros">
                     <template #empty> No se encontraron Registros. </template>
                     <template #loading>Cargando Registros, por favor espere un momento.</template>
-                    <Column field="cliente" header="Cliente" >
+                    <Column field="imagen" header="Imagen" style="text-align: center" headerStyle="width: 9em;"> 
                         <template #body="slotProps">
-                            {{ slotProps.data.pedido.cliente.nombres }} {{ slotProps.data.pedido.cliente.apellidos }}
+                            <div style="text-align: center">
+                                <img :src="convertirImagen(slotProps.data.imagen)" width="90" height="120" class="product-image"/>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column field="producto" header="Producto" >
+                        <template #body="slotProps">
+                            {{ slotProps.data.producto }}
+                        </template>
+                    </Column>
+                    <Column field="precioUnit" header="P. Unit." headerStyle="width: 6em;">
+                        <template #body="slotProps">
+                            {{ slotProps.data.precioUnitario }}
                         </template>
                     </Column>
                     <Column field="cantidad" header="Cantidad" headerStyle="width: 6em;">
@@ -69,10 +81,8 @@
 import CategoriaService from "../../service/administracion/CategoriaService";
 import Swal from 'sweetalert2';
 import PedidoService from "../../service/administracion/PedidoService";
-import { io } from 'socket.io-client';
 
 export default {
-    socket: io('http://localhost:3000/'),
     data() {
         return {
             valoresCategoria: [],
@@ -118,9 +128,6 @@ export default {
             }).catch(() => {
             });
         },
-        onSortChange(event){
-            
-        },
         convertirImagen(imagen){
             if(imagen != null){
                 return "data:image/png;base64," + imagen;
@@ -131,6 +138,7 @@ export default {
             this.pedidoSeleccionado = data;
             this.pedidoService.buscarPedidosDetalle(data.idPedido).then((response) => {
                 this.dataPedidos = response.data;
+                console.log(this.dataPedidos)
             }).catch(() => {
             });
         },
@@ -160,7 +168,6 @@ export default {
             this.dataPedidos = [];
             this.pedidoSeleccionado = null;
         },
-        
     }
 }
 </script>

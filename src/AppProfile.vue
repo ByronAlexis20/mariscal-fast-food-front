@@ -7,6 +7,11 @@
 			<span class="username"> {{ nombreUsuario }} </span>
 			<i class="pi pi-fw pi-cog"></i>
 		</button>
+		<transition name="layout-submenu-wrapper">
+			<ul>
+				<li><button class="p-link" @click="goDashboard" ><i class="pi pi-home"></i><span>Dashboard</span></button></li>
+			</ul>
+		</transition>
         <transition name="layout-submenu-wrapper">
             <ul v-show="expanded">
                 <li><button class="p-link"><i class="pi pi-fw pi-user"></i><span>Cuenta</span></button></li>
@@ -80,6 +85,9 @@ import UsuarioService from "./service/seguridad/UsuarioService";
 						this.$router.push('/');
 					}
 				})
+			},
+			goDashboard(){
+				this.$router.push("/dashboard");
 			},
 		}
 	}
