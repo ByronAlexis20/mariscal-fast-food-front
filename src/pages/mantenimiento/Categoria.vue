@@ -61,7 +61,7 @@
                         <div class="p-field p-grid">
                             <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Código:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="codigo" v-model.trim="categoria.idCategoria" disabled/>
+                                <InputText id="codigo" v-model="categoria.idCategoria" disabled/>
                             </div>
                         </div>
                         <div class="p-field p-grid">

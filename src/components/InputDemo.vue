@@ -277,16 +277,6 @@
 		},
 		methods: {
 			searchCountry(event) {
-				setTimeout(() => {
-					if (!event.query.trim().length) {
-						this.autoFilteredValue = [...this.autoValue];
-					}
-					else {
-						this.autoFilteredValue = this.autoValue.filter((country) => {
-							return country.name.toLowerCase().startsWith(event.query.toLowerCase());
-						});
-					}
-				}, 250);
 			}
 		}
 	}

@@ -79,7 +79,7 @@
                         <div class="p-field p-grid">
                             <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Código:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="codigo" v-model.trim="usuario.idUsuario" disabled/>
+                                <InputText id="codigo" v-model="usuario.idUsuario" disabled/>
                             </div>
                         </div>
                         <div class="p-field p-grid">
@@ -104,47 +104,47 @@
                         <div class="p-field p-grid">
                             <label for="cedula" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Cédula:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="cedula" v-model.trim="usuario.cedula" maxlength=13 required="true" autofocus :class="{'p-invalid': submitted && !usuario.cedula}"/>
+                                <InputText id="cedula" v-model="usuario.cedula" maxlength=13 required="true" autofocus :class="{'p-invalid': submitted && !usuario.cedula}"/>
                                 <small class="p-invalid" v-if="submitted && !usuario.cedula"> Cédula es obligatorio </small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="nombres" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Nombres:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="nombres" v-model.trim="usuario.nombres" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.nombres}"/>
+                                <InputText id="nombres" v-model="usuario.nombres" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.nombres}"/>
                                 <small class="p-invalid" v-if="submitted && !usuario.nombres"> Nombres es obligatorio </small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="apellidos" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Apellidos:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="apellidos" v-model.trim="usuario.apellidos" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.apellidos}"/>
+                                <InputText id="apellidos" v-model="usuario.apellidos" maxlength=100 required="true" autofocus :class="{'p-invalid': submitted && !usuario.apellidos}"/>
                                 <small class="p-invalid" v-if="submitted && !usuario.apellidos"> Apellidos es obligatorio </small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="direccion" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Dirección:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="direccion" v-model.trim="usuario.direccion" maxlength=250 required="true" autofocus />
+                                <InputText id="direccion" v-model="usuario.direccion" maxlength=250 required="true" autofocus />
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="telefono" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Teléfono:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="telefono" v-model.trim="usuario.telefono" maxlength=10 autofocus />
+                                <InputText id="telefono" v-model="usuario.telefono" maxlength=10 autofocus />
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="usuario" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Usuario:</label>
                             <div class="p-col-12 p-md-10">
-                                <InputText id="usuario" v-model.trim="usuario.usuario" maxlength=150 required="true" autofocus :class="{'p-invalid': submitted && !usuario.usuario}"/>
+                                <InputText id="usuario" v-model="usuario.usuario" maxlength=150 required="true" autofocus :class="{'p-invalid': submitted && !usuario.usuario}"/>
                                 <small class="p-invalid" v-if="submitted && !usuario.usuario"> Usuario es obligatorio </small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="clave" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0"> Clave:</label>
                             <div class="p-col-12 p-md-10">
-                                <Password v-model.trim="clave" promptLabel="Digite una clave" weakLabel="Debil" mediumLabel="Medio" strongLabel="Fuerte" :class="{'p-invalid': submitted && !clave}"/>
+                                <Password v-model="clave" promptLabel="Digite una clave" weakLabel="Debil" mediumLabel="Medio" strongLabel="Fuerte" :class="{'p-invalid': submitted && !clave}"/>
                                 <small class="p-invalid" v-if="submitted && !clave"> Clave es obligatorio </small>
                             </div>
                         </div>

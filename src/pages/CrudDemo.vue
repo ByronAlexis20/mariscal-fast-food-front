@@ -64,7 +64,7 @@
 					<img :src="'assets/layout/images/product/' + product.image" :alt="product.image" class="product-image" v-if="product.image" />
 					<div class="p-field">
 						<label for="name">Name</label>
-						<InputText id="name" v-model.trim="product.name" required="true" autofocus :class="{'p-invalid': submitted && !product.name}" />
+						<InputText id="name" v-model="product.name" required="true" autofocus :class="{'p-invalid': submitted && !product.name}" />
 						<small class="p-invalid" v-if="submitted && !product.name">Name is required.</small>
 					</div>
 					<div class="p-field">
@@ -176,7 +176,7 @@ export default {
 		saveProduct() {
 			this.submitted = true;
 
-			if (this.product.name.trim()) {
+			if (this.product.name) {
 				if (this.product.id) {
 					this.$set(this.products, this.findIndexById(this.product.id), this.product);
 					this.$toast.add({severity:'success', summary: 'Successful', detail: 'Product Updated', life: 3000});

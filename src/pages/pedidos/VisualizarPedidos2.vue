@@ -1,79 +1,7 @@
 
 <template>
     <div class="card">
-        <DataView :value="products" :layout="layout" :paginator="true" :rows="12" :sortOrder="sortOrder" :sortField="sortField">
-			<template #header>
-                <div class="grid grid-nogutter row">
-                    <div class="col-6" style="text-align: left">
-                        <div class="product-name">PEDIDOS</div>
-                    </div>
-                </div>
-			</template>
-            
-            <template #list="slotProps">
-				<div class="col-4 row justify-content-center">
-					<div class="product-list-item">
-						<div class="product-list-detail">
-							<div>Cliente: {{slotProps.data.cliente.nombres}} {{slotProps.data.cliente.apellidos}}</div>
-							<div style="padding-top:1px" class="product-description" >{{slotProps.data.categoria}}</div>
-                            <div >${{slotProps.data.total}}</div>
-                            <span :class="'product-badge'">PENDIENTE</span>
-						</div>
-						<div class="product-list-action">
-							<Button icon="pi pi-shopping-cart" label="Ver orden" @click="verOrdenes(slotProps.data)"></Button>
-						</div>
-					</div>
-				</div>
-			</template>
-		</DataView>
-        <Dialog :visible.sync="pedidoDialog" :style="{ width: '700px', height: '600px' }" header="Pedido" :modal="true" class="p-fluid"  @hide="hideDialog">
-            <div :style="{ 'height':'500px' }">
-                <Button icon="pi pi-pencil"  class="p-button-success" v-tooltip.top="'Atender'" @click="atender()" label="Atender"/>
-                <DataTable
-                    class="p-datatable-gridlines p-datatable-striped p-datatable-sm p-datatable-responsive p-datatable-customers"
-                    :value="dataPedidos"
-                    :rowHover="true"
-                    dataKey="idPedidoDetalle"
-                    :paginator="true"
-                    :rows="5"
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    :rowsPerPageOptions="[5, 10, 25]"
-                    currentPageReportTemplate="Mostrar {first} hasta {last} de {totalRecords} Registros">
-                    <template #empty> No se encontraron Registros. </template>
-                    <template #loading>Cargando Registros, por favor espere un momento.</template>
-                    <Column field="imagen" header="Imagen" style="text-align: center" headerStyle="width: 9em;"> 
-                        <template #body="slotProps">
-                            <div style="text-align: center">
-                                <img :src="convertirImagen(slotProps.data.imagen)" width="90" height="120" class="product-image"/>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column field="producto" header="Producto" >
-                        <template #body="slotProps">
-                            {{ slotProps.data.producto }}
-                        </template>
-                    </Column>
-                    <Column field="precioUnit" header="P. Unit." headerStyle="width: 6em;">
-                        <template #body="slotProps">
-                            {{ slotProps.data.precioUnitario }}
-                        </template>
-                    </Column>
-                    <Column field="cantidad" header="Cantidad" headerStyle="width: 6em;">
-                        <template #body="slotProps">
-                            {{ slotProps.data.cantidad }}
-                        </template>
-                    </Column>
-                    <Column field="total" header="Total" headerStyle="width: 6em;">
-                        <template #body="slotProps">
-                            {{ slotProps.data.total }}
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>
-            <template #footer>
-                <Button label="Salir" icon="pi pi-times" class="p-button-warning p-mr-2" @click="hideDialog"/>
-            </template>
-        </Dialog>
+        <iframe src="http://localhost:3000"></iframe>
 	</div>
 </template>
 
@@ -81,10 +9,6 @@
 import CategoriaService from "../../service/administracion/CategoriaService";
 import Swal from 'sweetalert2';
 import PedidoService from "../../service/administracion/PedidoService";
-import { io } from "socket.io-client";
-
-//const socket = io("http://localhost:3000");
-const socket = io("http://134.122.80.198:3000");
 
 export default {
     data() {
@@ -105,37 +29,19 @@ export default {
             pedidoDialog: false,
             pedidoSeleccionado: null,
             dataPedidos: [],
-            
         }
     },
     categoriaService: null,
     pedidoService: null,
     created() {
-        socket.on('connect', (e) => {
-            console.log(e)
-            console.log("usuario conectado")
-        });
         this.categoriaService = new CategoriaService();
         this.pedidoService = new PedidoService();
-        this.recibirPedidos();
     },
     mounted() {
         this.cargarCategorias();
         this.cargarProductos();
     },
     methods: {
-        recibirPedidos(){
-            socket.on('recibir-pedidos', (obj) => {
-                console.log("objeto recibido", obj);
-                Swal.fire({
-                    html: `<h1>Pedido recibido</h1>
-                    <p>Cliente <strong>${obj.cliente}</strong></p>
-                    <br>
-                    `,
-                });
-                this.cargarProductos();
-            });
-        },
         cargarCategorias(){
             this.categoriaService.buscarActivosMasTodos().then((response) => {
                 this.valoresCategoria = response.data;
